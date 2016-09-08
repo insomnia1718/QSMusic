@@ -4,7 +4,7 @@
     <color name="colorPrimaryDark">@color/teal700</color>
     <color name="colorAccent">#FF4081</color>
     <color name="musicItemBg">#3C3949</color>
-    <color name="mainText">@color/grey700</color>
+    <color name="mainText">@color/black</color>
     <color name="secondText">@color/grey500</color>
     <color name="white">#ffffff</color>
     <color name="gray">#969696</color>

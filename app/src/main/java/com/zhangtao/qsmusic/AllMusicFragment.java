@@ -3,6 +3,8 @@ package com.zhangtao.qsmusic;
 
 
 import android.app.Instrumentation;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -36,36 +38,62 @@ public class AllMusicFragment extends Fragment {
     private ArrayList<Music> musics;
     private HashMap<Long,Bitmap> icons;
     private long playingMusicId = 10000000;
-    MusicService musicService;
+    OnFragmentListener listener;
+
+    private void setOnFragmentListener(OnFragmentListener listener){
+        this.listener = listener;
+    }
 
 
-    public static AllMusicFragment getInstance(){
+    public static AllMusicFragment getInstance(Context context,OnFragmentListener listener){
         if(f == null){
-            f = new AllMusicFragment();
-
+            f = new AllMusicFragment(context);
+            Log.d("getInstance","Create new AllMusicFragment");
         }
+        f.setOnFragmentListener(listener);
         return f;
     }
 
-    public void setMusicService(MusicService service){
-        this.musicService = service;
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.d("allMusic","allMusic");
-        View v = inflater.inflate(R.layout.fragment_all_music,container,false);
-        rv  = (RecyclerView)v.findViewById(R.id.rvMusicList);
-        musics = MusicUtil.getInstance().getMusicList(getActivity());
+
+    private AllMusicFragment(Context context){
+        musics = MusicUtil.getInstance().getMusicList(context);
         icons = new HashMap<>();
         double size = 0.0;
         for (Music m:musics){
-            Bitmap bitmap = MusicUtil.getArtwork(getActivity(),m.getId(),m.getAlbumId(),true);
+            Bitmap bitmap = MusicUtil.getArtwork(context,m.getId(),m.getAlbumId(),true);
             size+=bitmap.getByteCount();
             icons.put(m.getId(),bitmap);
         }
         Log.d("size",size/1024/1024+"");
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Log.d("AllMusicFragment","onCreate");
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        Log.d("AllMusicFragment","onAttach");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d("AllMusicFragment","onResume");
+    }
+
+
+    @Nullable
+    @Override
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.d("AllMusicFragment","onCreateView");
+        View v = inflater.inflate(R.layout.fragment_all_music,container,false);
+        rv  = (RecyclerView)v.findViewById(R.id.rvMusicList);
+
 
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         MusicListAdapter adapter = new MusicListAdapter();
@@ -87,7 +115,10 @@ public class AllMusicFragment extends Fragment {
                         break;
                     case R.id.layoutItem:
                         Log.d("onclick","layout");
-                        musicService.playMusic(music);
+                        Intent intent = new Intent();
+                        intent.setAction("PLAY_MUSIC");
+                        intent.putExtra("music",music);
+                        listener.onAction(intent);
 //                        v.setBackgroundColor(getResources().getColor(R.color.grey300)) ;
                         break;
                 }
@@ -102,7 +133,6 @@ public class AllMusicFragment extends Fragment {
     class MusicListAdapter extends RecyclerView.Adapter{
 
         private OnItemClickListener listener;
-        Handler handler;
 
         @Override
         public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

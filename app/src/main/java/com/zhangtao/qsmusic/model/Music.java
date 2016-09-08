@@ -1,9 +1,13 @@
 package com.zhangtao.qsmusic.model;
 
+import java.io.Serializable;
+
 /**
  * Created by tao.zhang on 16-8-31.
  */
-public class Music {
+public class Music implements Serializable{
+
+    public static final long serialVersionUID = 1L;
     private long id;
     private String title;
     private long albumId;

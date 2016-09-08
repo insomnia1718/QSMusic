@@ -6,6 +6,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.zhangtao.qsmusic.model.Music;
 
@@ -14,9 +15,12 @@ import java.io.IOException;
 public class MusicService extends Service {
     Music currentMusic;
     private IBinder mBinder = new LocalBinder();
-    private MediaPlayer player = new MediaPlayer();
+    private MediaPlayer player;
 
     public MusicService() {
+        if(player == null){
+            player = new MediaPlayer();
+        }
     }
 
     @Override
@@ -32,6 +36,7 @@ public class MusicService extends Service {
     }
 
     public void playMusic(Music music){
+        Log.d("MusicService","playMusic");
         try {
             stopMusic();
             player.setDataSource(this, Uri.parse(music.getUrl()));
@@ -47,5 +52,21 @@ public class MusicService extends Service {
             player.stop();
         }
         player.reset();
+    }
+
+    public void pauseMusic(){
+        if(player.isPlaying()){
+            player.pause();
+        }
+    }
+
+    public void resumeMusic(){
+        player.start();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        player.release();
     }
 }

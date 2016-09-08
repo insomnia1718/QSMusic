@@ -6,26 +6,10 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.zhangtao.qsmusic.MainActivity"
+
     tools:showIn="@layout/app_bar_main">
 
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewPager"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/grey100"
 
 
-        />
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:background="@color/grey500"
-        android:layout_alignParentBottom="true"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginBottom="4dp"
-        android:layout_height="40dp">
-
-
-    </LinearLayout>
 </RelativeLayout>

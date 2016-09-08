@@ -7,46 +7,75 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.media.Image;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.graphics.Palette;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
+import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.zhangtao.qsmusic.model.Music;
+import com.zhangtao.qsmusic.utils.MusicUtil;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private ViewPager viewPager;
-    private TabLayout tabLayout;
+    private ImageButton ibPlay;
+    private ImageButton ibPause;
+    private LinearLayout layoutFooter;
+    private ImageView ivFooterIcon;
+    private TextView tvFooterTitle;
+    private TextView tvFooterArtist;
+    private ImageButton ibSkipPre;
+    private ImageButton ibSkipNext;
+    private FrameLayout mainFrame;
+    private AppBarLayout appBarLayout;
+    private NavigationView navigationView;
+    private Music currentMusic;
 
-    private AllMusicFragment allMusicFragment;
 
+    private MusicService getMusicService(){
+        return AppController.getInstance().getMusicService();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+//        Intent intent = new Intent(MainActivity.this,MusicService.class);
+//        bindService(intent,connection, Context.BIND_AUTO_CREATE);
+//        musicService = AppController.getInstance().getMusicService();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
+        appBarLayout = (AppBarLayout)findViewById(R.id.appBarLayout);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -54,28 +83,76 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        viewPager = (ViewPager) findViewById(R.id.viewPager);
-        tabLayout = (TabLayout) findViewById(R.id.tabLayout);
 
-        allMusicFragment  = AllMusicFragment.getInstance();
+        navigationView.setNavigationItemSelectedListener(this);
+
+        mainFrame = (FrameLayout)findViewById(R.id.main_frame);
+
+        ibPlay = (ImageButton)findViewById(R.id.ibPlay);
+        ibPause = (ImageButton)findViewById(R.id.ibPause);
+        layoutFooter = (LinearLayout) findViewById(R.id.layout_footer);
+        ivFooterIcon = (ImageView) findViewById(R.id.ivFooterIcon);
+        tvFooterTitle = (TextView) findViewById(R.id.tvFooterTitle);
+        tvFooterArtist = (TextView) findViewById(R.id.tvFooterArtist);
+        ibSkipPre = (ImageButton) findViewById(R.id.ibSkipPre);
+        ibSkipNext = (ImageButton) findViewById(R.id.ibSkipNext);
+
+
+        ibPlay.setOnClickListener(onFooterOnClickListener);
+        ibPause.setOnClickListener(onFooterOnClickListener);
+
+
 
 
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
             if(checkPermisson()){
-                setupTabLayout();
+                showFragments(MusicStoreFragment.getInstance(onFragmentListener));
+                setTitle("音乐库");
+                navigationView.setCheckedItem(R.id.nav_store);
             }else {
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.READ_EXTERNAL_STORAGE},1);
             }
         }
 
+
+
     }
 
-    private void setupTabLayout(){
-        viewPager.setAdapter(new HomeViewPagerAdapter(getSupportFragmentManager()));
-
-        tabLayout.setupWithViewPager(viewPager);
+    private void showFragments(Fragment fragment){
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_frame,fragment);
+        transaction.commit();
+        appBarLayout.setExpanded(true);
     }
+
+    private View.OnClickListener onFooterOnClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()){
+                case R.id.ibPlay:
+                    if(currentMusic != null){
+                        musicService.resumeMusic();
+                    }
+                    ibPlay.setVisibility(View.GONE);
+                    ibPause.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.ibPause:
+                    if(currentMusic!=null) {
+                        musicService.pauseMusic();
+                    }
+                    ibPause.setVisibility(View.GONE);
+                    ibPlay.setVisibility(View.VISIBLE);
+                    break;
+                case R.id.ibSkipNext:
+                    break;
+                case R.id.ibSkipPre:
+                    break;
+
+            }
+        }
+    };
+
+
     @TargetApi(23)
     private boolean checkPermisson(){
         return ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)== PackageManager.PERMISSION_GRANTED;
@@ -85,35 +162,11 @@ public class MainActivity extends AppCompatActivity
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if(requestCode == 1&&grantResults.length>0&&grantResults[0] == PackageManager.PERMISSION_GRANTED){
-            setupTabLayout();
+            showFragments(MusicStoreFragment.getInstance(onFragmentListener));
         }
     }
 
-    class HomeViewPagerAdapter extends FragmentPagerAdapter {
 
-        public HomeViewPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (position == 0) {
-
-                return allMusicFragment;
-            }
-            return new RecentFragment();
-        }
-
-        @Override
-        public int getCount() {
-            return 2;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return position == 0 ? "全部音乐" : "最近播放";
-        }
-    }
 
 
     @Override
@@ -122,7 +175,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            moveTaskToBack(true);
         }
     }
 
@@ -148,23 +201,27 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
+        if (id == R.id.nav_store) {
+            showFragments( MusicStoreFragment.getInstance(onFragmentListener));
+            setTitle("音乐库");
+        } else if (id == R.id.nav_like) {
+            showFragments(MusicLikeFragment.getInstance());
+            setTitle("喜欢");
+        } else if (id == R.id.nav_list) {
+            showFragments(MusicListFragment.getInstance());
+            setTitle("我的歌单");
+        } else if (id == R.id.nav_folder) {
+            showFragments(FolderFragment.getInstance());
 
-        if (id == R.id.nav_camera) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
+            setTitle("文件夹");
+        } else if (id == R.id.nav_settings) {
+            showFragments(SettingFragment.getInstance());
+            setTitle("设置");
+        } else if (id == R.id.nav_exit) {
 
         }
 
@@ -175,14 +232,47 @@ public class MainActivity extends AppCompatActivity
 
 
     private MusicService musicService;
-    private boolean binded;
+    private boolean binded = false;
+
+    private OnFragmentListener onFragmentListener = new OnFragmentListener() {
+        @Override
+        public void onAction(Intent intent) {
+            String action = intent.getAction();
+            if(action.equalsIgnoreCase("PLAY_MUSIC")){
+                Music music = (Music)intent.getSerializableExtra("music");
+                getMusicService().playMusic(music);
+                Bitmap footIcon = MusicUtil.getArtwork(MainActivity.this,music.getId(),music.getAlbumId(),true);
+                ivFooterIcon.setImageBitmap(footIcon);
+                tvFooterArtist.setText(music.getArtist());
+                tvFooterTitle.setText(music.getTitle());
+                ibPlay.setVisibility(View.GONE);
+                ibPause.setVisibility(View.VISIBLE);
+                currentMusic = music;
+                Palette.Builder builder = new Palette.Builder(footIcon);
+                builder.generate(new Palette.PaletteAsyncListener() {
+                    @Override
+                    public void onGenerated(Palette palette) {
+                        layoutFooter.setBackgroundColor(palette.getVibrantColor(Color.WHITE));
+                    }
+                });
+            }else if (action.equalsIgnoreCase("PAUSE_MUSIC")){
+                musicService.pauseMusic();
+            }else if(action.equalsIgnoreCase("STOP_MUSIC")){
+                musicService.stopMusic();
+            }else if(action.equalsIgnoreCase("SKIP_NEXT")){
+
+            }else if(action.equalsIgnoreCase("SKIP_PRE")){
+
+            }
+        }
+    };
 
     private ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             MusicService.LocalBinder localBinder = (MusicService.LocalBinder)service;
             musicService = localBinder.getService();
-            allMusicFragment.setMusicService(musicService);
+
             Log.d("musicservice","bind");
             binded = true;
         }
@@ -196,17 +286,23 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        Intent intent = new Intent(MainActivity.this,MusicService.class);
-        bindService(intent,connection, Context.BIND_AUTO_CREATE);
+
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if(binded){
-            unbindService(connection);
-            binded = false;
-        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+            if(binded) {
+                unbindService(connection);
+                Log.d("musicservice", "unbind");
+                binded = false;
+            }
     }
 }

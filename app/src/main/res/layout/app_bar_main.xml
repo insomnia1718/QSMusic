@@ -1,16 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<android.support.design.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
 
     tools:context="com.zhangtao.qsmusic.MainActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
+        app:elevation="0dp"
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <android.support.v7.widget.Toolbar
@@ -19,28 +24,111 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
-
+            android:elevation="0dp"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <android.support.design.widget.TabLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
 
-            android:id="@+id/tabLayout"
-            app:tabBackground="@color/colorPrimary"
-            app:tabGravity="fill"
-            app:tabIndicatorColor="@color/white"
-
-
-
-
-            />
 
     </android.support.design.widget.AppBarLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/main_frame"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
 
-        <include layout="@layout/content_main"/>
 
 
 
 </android.support.design.widget.CoordinatorLayout>
+
+    <LinearLayout
+        android:layout_width="320dp"
+        android:background="@drawable/footer_bg"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="4dp"
+        android:id="@+id/layout_footer"
+
+        android:gravity="center_vertical"
+
+        android:layout_height="55dp">
+        <ImageView
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:background="@color/grey300"
+            android:id="@+id/ivFooterIcon"
+            android:src="@drawable/ic_music_note_grey_500_48dp"
+            />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Funk Citysadsadasdasd"
+                android:lines="1"
+                android:ellipsize="end"
+                android:textSize="14dp"
+                android:id="@+id/tvFooterTitle"
+                android:textColor="@color/mainText"
+                />
+            <TextView
+                android:text="Markasdasdasdsadsad"
+                android:lines="1"
+                android:textColor="@color/secondText"
+                android:ellipsize="end"
+                android:textSize="13dp"
+                android:id="@+id/tvFooterArtist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_height="match_parent">
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/ic_skip_previous_black_36dp"
+            android:id="@+id/ibSkipPre"
+            />
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/ibPlay"
+            android:background="@drawable/ic_play_arrow_black_36dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            />
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/ibPause"
+            android:background="@drawable/ic_pause_black_36dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginLeft="16dp"
+            android:visibility="gone"
+            />
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/ibSkipNext"
+            android:background="@drawable/ic_skip_next_black_36dp"
+            android:layout_marginRight="8dp"
+            />
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>
