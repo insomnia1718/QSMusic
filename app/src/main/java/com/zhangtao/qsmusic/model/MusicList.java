@@ -1,5 +1,7 @@
 package com.zhangtao.qsmusic.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
@@ -10,10 +12,10 @@ public class MusicList  {
     private String name;
     private MusicListType type;
     private int currentIndex;
-    private
 
 
-    enum MusicListType{
+
+    public enum MusicListType{
         LIKE,
         ALBUM,
         DEFAULT,
@@ -64,17 +66,35 @@ public class MusicList  {
     }
 
     public Music next(){
-        if(musics.size()<=currentIndex++){
+        Log.d("next",currentIndex+"-"+musics.size());
+        if(musics.size()<=++currentIndex){
+            Log.d("next111111111",currentIndex+"");
             currentIndex = 0;
         }
+        Log.d("next22222",currentIndex+"");
         return musics.get(currentIndex);
     }
 
     public Music pre(){
-        if(currentIndex==0){
-            currentIndex = (musics.size() ==  0?0:musics.size()-1);
+        if(--currentIndex<0){
+            if(!(musics.size() == 0)){
+                currentIndex = musics.size()-1;
+            }else currentIndex = -1;
         }
         return musics.get(currentIndex);
+    }
+
+    public int indexOf(Music music){
+        for (Music m:musics){
+            if (music.equals(m)){
+                return musics.indexOf(m);
+            }
+        }
+        return -1;
+    }
+
+    public void setCurrentMusic(Music music){
+        this.currentIndex = indexOf(music);
     }
 
     public Music current(){

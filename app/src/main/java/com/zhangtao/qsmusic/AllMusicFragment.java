@@ -61,7 +61,7 @@ public class AllMusicFragment extends Fragment {
         icons = new HashMap<>();
         double size = 0.0;
         for (Music m:musics){
-            Bitmap bitmap = MusicUtil.getArtwork(context,m.getId(),m.getAlbumId(),true);
+            Bitmap bitmap = MusicUtil.getArtwork(context,m.getId(),m.getAlbumId(),true,4);
             size+=bitmap.getByteCount();
             icons.put(m.getId(),bitmap);
         }
@@ -145,7 +145,7 @@ public class AllMusicFragment extends Fragment {
             final Music m = musics.get(position);
             h.tvTitle.setText(m.getTitle());
             h.tvArtistAndAlbum.setText(m.getArtist()+" - "+m.getAlbum());
-            h.tvDuration.setText(MusicUtil.getInstance().formatDuration(m.getDuration()));
+            h.tvDuration.setText(MusicUtil.getInstance().formatTime(m.getDuration()));
             h.ivIcon.setImageBitmap(icons.get(m.getId()));
 
 

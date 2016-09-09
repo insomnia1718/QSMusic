@@ -105,4 +105,13 @@ public class Music implements Serializable{
                 ", url='" + url + '\'' +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if(o instanceof Music) {
+            Music m = (Music) o;
+            return this.id == m.getId();
+        }
+        return false;
+    }
 }

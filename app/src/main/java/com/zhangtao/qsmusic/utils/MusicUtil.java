@@ -28,25 +28,24 @@ public class MusicUtil {
     private static final BitmapFactory.Options sBitmapOptions = new BitmapFactory.Options();
     private static Bitmap mCachedBit = null;
 
-    public static  MusicUtil getInstance(){
-        if(musicUtil == null){
+    public static MusicUtil getInstance() {
+        if (musicUtil == null) {
             musicUtil = new MusicUtil();
         }
         return musicUtil;
     }
 
-    private MusicUtil(){
+    private MusicUtil() {
 
 
     }
 
 
-
-    public ArrayList<Music> getMusicList(Context context){
+    public ArrayList<Music> getMusicList(Context context) {
         ArrayList<Music> musics = new ArrayList<>();
-        Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,null,null,null,MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-        if(cursor!=null){
-            if(cursor.moveToFirst()){
+        Cursor cursor = context.getContentResolver().query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, null, null, null, MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
                 do {
                     Music music = new Music();
                     music.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
@@ -59,19 +58,19 @@ public class MusicUtil {
                     music.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE)));
                     music.setUrl(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)));
                     musics.add(music);
-                }while (cursor.moveToNext());
+                } while (cursor.moveToNext());
             }
         }
         return musics;
     }
 
     public static Bitmap getArtwork(Context context, long song_id, long album_id,
-                                    boolean allowdefault) {
+                                    boolean allowdefault, int scale) {
         if (album_id < 0) {
             // This is something that is not in the database, so get the album art directly
             // from the file.
             if (song_id >= 0) {
-                Bitmap bm = getArtworkFromFile(context, song_id, -1);
+                Bitmap bm = getArtworkFromFile(context, song_id, -1, scale);
                 if (bm != null) {
                     return bm;
                 }
@@ -91,13 +90,13 @@ public class MusicUtil {
 
 //                opts.inJustDecodeBounds = true;
 //                BitmapFactory.decodeStream(in, null, opts);
-                opts.inSampleSize = 4;
+                opts.inSampleSize = scale;
 //                opts.inJustDecodeBounds = false;
-                return BitmapFactory.decodeStream(in,null,opts);
+                return BitmapFactory.decodeStream(in, null, opts);
             } catch (FileNotFoundException ex) {
                 // The album art thumbnail does not actually exist. Maybe the user deleted it, or
                 // maybe it never existed to begin with.
-                Bitmap bm = getArtworkFromFile(context, song_id, album_id);
+                Bitmap bm = getArtworkFromFile(context, song_id, album_id, scale);
                 if (bm != null) {
                     if (bm.getConfig() == null) {
                         bm = bm.copy(Bitmap.Config.RGB_565, false);
@@ -122,9 +121,9 @@ public class MusicUtil {
         return null;
     }
 
-    private static Bitmap getArtworkFromFile(Context context, long songid, long albumid) {
+    private static Bitmap getArtworkFromFile(Context context, long songid, long albumid, int scale) {
         Bitmap bm = null;
-        byte [] art = null;
+        byte[] art = null;
         String path = null;
         if (albumid < 0 && songid < 0) {
             throw new IllegalArgumentException("Must specify an album or a song id");
@@ -150,9 +149,9 @@ public class MusicUtil {
                     BitmapFactory.Options opts = new BitmapFactory.Options();
 //                    opts.inJustDecodeBounds = true;
 //                    BitmapFactory.decodeFileDescriptor(fd,null,opts);
-                    opts.inSampleSize = 4;
+                    opts.inSampleSize = scale;
 //                    opts.inJustDecodeBounds = false;
-                    bm = BitmapFactory.decodeFileDescriptor(fd,null,opts);
+                    bm = BitmapFactory.decodeFileDescriptor(fd, null, opts);
                 }
             }
         } catch (FileNotFoundException ex) {
@@ -166,30 +165,32 @@ public class MusicUtil {
         return bm;
     }
 
-    public static String formatDuration(long duration){
-        int d = (int)duration/1000;
-        return d/60 + ":"+d%60;
+    public static String formatTime(long duration) {
+        int d = (int) duration / 1000;
+        String min = String.valueOf(d / 60);
+        String second = String.valueOf(d % 60);
+        return (min.length() == 1 ? "0" + min : min) + ":" + (second.length() == 1 ? "0" + second : second);
     }
 
     private static Bitmap getDefaultArtwork(Context context) {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_music_note_grey_500_48dp,opts);
-        opts.inSampleSize = calculateInSampleSize(opts,120,120);
+        BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_music_note_grey_500_48dp, opts);
+        opts.inSampleSize = calculateInSampleSize(opts, 120, 120);
         opts.inJustDecodeBounds = false;
-        return BitmapFactory.decodeResource(context.getResources(),R.drawable.ic_music_note_grey_500_48dp,opts);
+        return BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_music_note_grey_500_48dp, opts);
     }
 
-    private static int calculateInSampleSize(BitmapFactory.Options options,int reqWidth,int reqHeight){
+    private static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
         int width = options.outWidth;
         int height = options.outHeight;
         int inSampleSize = 1;
-        if(width>reqWidth||height>reqHeight){
-            int halfWidth = width/2;
-            int halfHeight = height/2;
+        if (width > reqWidth || height > reqHeight) {
+            int halfWidth = width / 2;
+            int halfHeight = height / 2;
 
-            while((halfHeight/inSampleSize)>reqHeight&&(halfWidth/inSampleSize)>reqWidth){
-                inSampleSize*=2;
+            while ((halfHeight / inSampleSize) > reqHeight && (halfWidth / inSampleSize) > reqWidth) {
+                inSampleSize *= 2;
             }
         }
         return inSampleSize;

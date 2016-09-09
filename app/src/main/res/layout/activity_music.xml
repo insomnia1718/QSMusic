@@ -6,7 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
 
     android:fitsSystemWindows="true"
-    android:clipToPadding="true"
     tools:context="com.zhangtao.qsmusic.MusicActivity">
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
@@ -25,14 +24,15 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.4"
-
+            android:layout_weight="0.3"
+            android:id="@+id/topBgView"
             android:background="@color/white"
             />
         <View android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.6"
+            android:layout_weight="0.7"
             android:background="#212121"
+            android:id="@+id/bottomBgView"
             />
 
     </LinearLayout>
@@ -43,13 +43,13 @@
         android:orientation="vertical"
         android:gravity="center"
         android:paddingTop="16dp"
-
         android:layout_height="wrap_content">
         <ImageView
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:src="@drawable/test"
             android:scaleType="centerCrop"
+            android:id="@+id/iconAlbum"
             />
         <LinearLayout
             android:orientation="vertical"
@@ -60,8 +60,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Jon Snow"
+                android:textSize="13dp"
                 android:layout_marginTop="20dp"
                 android:textColor="@color/white"
+                android:id="@+id/txtArtist"
                 />
             <TextView
                 android:layout_width="wrap_content"
@@ -69,14 +71,16 @@
                 android:text="Fuck Off"
                 android:layout_marginTop="8dp"
                 android:textSize="17dp"
+
                 android:textColor="@color/white"
+                android:id="@+id/txtTitle"
                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="26dp"
                 android:orientation="horizontal"
                 >
 
@@ -86,11 +90,12 @@
                     android:text="0:02"
                     android:textColor="@color/white"
                     android:textSize="10dp"
+                    android:id="@+id/txtPosition"
                     />
 
             <android.support.v7.widget.AppCompatSeekBar
                 android:layout_width="260dp"
-
+                android:id="@+id/seekBar"
 
                 android:progressDrawable="@drawable/seekbar_style"
                 android:thumb="@drawable/seekbar_thumb"
@@ -101,6 +106,7 @@
                     android:text="0:02"
                     android:textSize="10dp"
                     android:textColor="@color/white"
+                    android:id="@+id/txtDuration"
                     />
 
             </LinearLayout>
@@ -111,29 +117,59 @@
                 android:layout_marginTop="32dp"
                 android:layout_height="wrap_content">
                 <ImageButton
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/ic_skip_previous_white_36dp"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:id="@+id/ibSkipPre"
+                    android:background="@drawable/pre"
                     />
                 <ImageButton
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginRight="16dp"
-android:background="@drawable/ic_play_circle_outline_white_36dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:id="@+id/ibPlay"
+android:background="@drawable/play1"
                     />
                 <ImageButton
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:background="@drawable/ic_skip_next_white_36dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:id="@+id/ibPause"
+                    android:visibility="gone"
+                    android:background="@drawable/pause1"
+                    />
+                <ImageButton
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:background="@drawable/next1"
+                    android:id="@+id/ibSkipNext"
                     />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="32dp"
                 android:layout_height="wrap_content">
-
-
+                <ImageButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_favorite_red_300_24dp"
+                    />
+                <ImageButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="32dp"
+                    android:layout_marginRight="32dp"
+                    android:background="@drawable/ic_playlist_add_grey_500_24dp"
+                    />
+                <ImageButton
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:background="@drawable/ic_favorite_red_300_24dp"
+                    />
             </LinearLayout>
 
 
