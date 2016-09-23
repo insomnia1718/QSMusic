@@ -1,9 +1,8 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.control;
 
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.media.TimedText;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.IBinder;
@@ -65,6 +64,8 @@ public class MusicService extends Service {
         }
         return mBinder;
     }
+
+
 
     public class LocalBinder extends Binder {
         public MusicService getService(){

@@ -1,4 +1,4 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.control;
 
 import android.app.Application;
 import android.content.ComponentName;
@@ -16,6 +16,7 @@ public class AppController extends Application {
     private MusicService musicService;
     private boolean binded = false;
     private static AppController appController;
+
     private ServiceConnection connection  = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -27,7 +28,6 @@ public class AppController extends Application {
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-
         }
     };
 

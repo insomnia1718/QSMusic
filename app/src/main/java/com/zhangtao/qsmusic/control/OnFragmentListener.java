@@ -1,4 +1,4 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.control;
 
 import android.content.Intent;
 

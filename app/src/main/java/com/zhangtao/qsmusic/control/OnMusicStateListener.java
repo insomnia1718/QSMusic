@@ -1,4 +1,4 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.control;
 
 import com.zhangtao.qsmusic.model.Music;
 

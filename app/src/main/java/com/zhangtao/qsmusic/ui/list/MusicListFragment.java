@@ -1,4 +1,4 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.ui.list;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,13 +10,14 @@ import android.view.ViewGroup;
 /**
  * Created by tao.zhang on 16-9-7.
  */
-public class MusicLikeFragment extends Fragment {
+public class MusicListFragment extends Fragment {
 
-    private static MusicLikeFragment fragment;
+    private static MusicListFragment fragment;
 
-    public static MusicLikeFragment getInstance(){
+    public static MusicListFragment getInstance(){
         if(fragment == null){
-            fragment = new MusicLikeFragment();
+
+            fragment = new MusicListFragment();
         }
         return fragment;
     }

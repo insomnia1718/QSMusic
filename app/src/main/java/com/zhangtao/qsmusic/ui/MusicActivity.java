@@ -1,8 +1,7 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.ui;
 
 import android.annotation.TargetApi;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.ActionBar;
@@ -11,18 +10,20 @@ import android.os.Bundle;
 import android.support.v7.graphics.Palette;
 import android.support.v7.widget.AppCompatSeekBar;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.zhangtao.qsmusic.control.AppController;
+import com.zhangtao.qsmusic.control.MusicService;
+import com.zhangtao.qsmusic.control.OnMusicStateListener;
+import com.zhangtao.qsmusic.R;
 import com.zhangtao.qsmusic.model.Music;
 import com.zhangtao.qsmusic.utils.MusicUtil;
-
-import java.lang.annotation.Target;
 
 public class MusicActivity extends AppCompatActivity implements View.OnClickListener{
 
@@ -41,6 +42,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
     private ImageButton ibPause;
     private ImageButton ibSkipNext;
     private Music music;
+    private ImageView bg_iv;
 
 
     private Handler handler = new Handler(){
@@ -109,6 +111,11 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     private void setUpMusicView(Music music){
         Bitmap bitmap = MusicUtil.getArtwork(this,music.getId(),music.getAlbumId(),true,0);
+//        bg_iv.setImageBitmap(DensityUtil.fastblur(this,bitmap,32));
+//        viewGroup.setBackgroundTintMode(Mo);
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)toolbar.getLayoutParams();
+        layoutParams.topMargin = getStatusBarHeight();
+        toolbar.setLayoutParams(layoutParams);
         iconAlbum.setImageBitmap(bitmap);
         txtTitle.setText(music.getTitle());
         txtArtist.setText(music.getArtist());
@@ -139,8 +146,8 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
 
     private void initView() {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        topBgView = (View) findViewById(R.id.topBgView);
-        bottomBgView = (View) findViewById(R.id.bottomBgView);
+//        topBgView = (View) findViewById(R.id.topBgView);
+//        bottomBgView = (View) findViewById(R.id.bottomBgView);
         iconAlbum = (ImageView) findViewById(R.id.iconAlbum);
         txtArtist = (TextView) findViewById(R.id.txtArtist);
         txtTitle = (TextView) findViewById(R.id.txtTitle);
@@ -151,7 +158,7 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
         ibPlay = (ImageButton) findViewById(R.id.ibPlay);
         ibPause = (ImageButton) findViewById(R.id.ibPause);
         ibSkipNext = (ImageButton) findViewById(R.id.ibSkipNext);
-
+//        bg_iv = (ImageView)findViewById(R.id.bg_iv);
     }
 
     @TargetApi(21)
@@ -180,5 +187,14 @@ public class MusicActivity extends AppCompatActivity implements View.OnClickList
                 getMusicService().skipPre();
                 break;
         }
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 }

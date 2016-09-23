@@ -1,9 +1,8 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.ui.setting;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,17 +10,17 @@ import android.view.ViewGroup;
 /**
  * Created by tao.zhang on 16-9-7.
  */
-public class MusicListFragment extends Fragment {
+public class SettingFragment extends Fragment {
 
-    private static MusicListFragment fragment;
+    private static SettingFragment fragment;
 
-    public static MusicListFragment getInstance(){
+    public static SettingFragment getInstance(){
         if(fragment == null){
-
-            fragment = new MusicListFragment();
+            fragment = new SettingFragment();
         }
         return fragment;
     }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

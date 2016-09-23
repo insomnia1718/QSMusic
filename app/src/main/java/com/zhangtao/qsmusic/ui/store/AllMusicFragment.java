@@ -1,15 +1,11 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.ui.store;
 
 
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,6 +18,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.zhangtao.qsmusic.control.OnFragmentListener;
+import com.zhangtao.qsmusic.R;
 import com.zhangtao.qsmusic.model.Music;
 import com.zhangtao.qsmusic.utils.MusicUtil;
 

@@ -11,6 +11,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 
 import com.zhangtao.qsmusic.R;
+import com.zhangtao.qsmusic.model.Album;
 import com.zhangtao.qsmusic.model.Music;
 
 import java.io.FileDescriptor;
@@ -18,6 +19,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by tao.zhang on 16-8-31.
@@ -47,21 +50,60 @@ public class MusicUtil {
         if (cursor != null) {
             if (cursor.moveToFirst()) {
                 do {
-                    Music music = new Music();
-                    music.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
-                    music.setDisplayName(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME)));
-                    music.setId(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
-                    music.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
-                    music.setAlbumId(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
-                    music.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
-                    music.setDuration(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
-                    music.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE)));
-                    music.setUrl(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)));
-                    musics.add(music);
+                    String url = cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA));
+                    if(!url.contains(".ogg")&&!url.contains(".wav")) {
+                        Music music = new Music();
+                        music.setTitle(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.TITLE)));
+                        music.setDisplayName(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DISPLAY_NAME)));
+                        music.setId(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media._ID)));
+                        music.setAlbum(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM)));
+                        music.setAlbumId(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.ALBUM_ID)));
+                        music.setArtist(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.ARTIST)));
+                        music.setDuration(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.DURATION)));
+                        music.setSize(cursor.getLong(cursor.getColumnIndex(MediaStore.Audio.Media.SIZE)));
+                        music.setUrl(cursor.getString(cursor.getColumnIndex(MediaStore.Audio.Media.DATA)));
+                        musics.add(music);
+                    }
                 } while (cursor.moveToNext());
             }
+            cursor.close();
         }
         return musics;
+    }
+
+
+    public ArrayList<Album> getAlbumList(Context context){
+        ArrayList<Album> albums = new ArrayList<>();
+        String where = null;
+
+        final Uri uri = MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI;
+        final String _id = MediaStore.Audio.Albums._ID;
+        final String album_name = MediaStore.Audio.Albums.ALBUM;
+        final String artist = MediaStore.Audio.Albums.ARTIST;
+        final String albumart = MediaStore.Audio.Albums.ALBUM_ART;
+        final String tracks = MediaStore.Audio.Albums.NUMBER_OF_SONGS;
+
+        final String[] columns = { _id, album_name, artist, albumart, tracks };
+        Cursor cursor = context.getContentResolver().query(uri, columns, where, null, null);
+
+        if(cursor!=null && cursor.moveToFirst()){
+            do {
+                long id = cursor.getLong(cursor.getColumnIndex(_id));
+                String name = cursor.getString(cursor.getColumnIndex(album_name));
+                String artist2 = cursor.getString(cursor.getColumnIndex(artist));
+                String artPath = cursor.getString(cursor.getColumnIndex(albumart));
+                Bitmap art = BitmapFactory.decodeFile(artPath);
+                int nr =Integer.parseInt(cursor.getString(cursor.getColumnIndex(tracks)));
+                Album album = new Album();
+                album.setId(id);
+                album.setArtist(artist2);
+                album.setTitle(name);
+                album.setSongsCount(nr);
+                albums.add(album);
+            } while (cursor.moveToNext());
+            cursor.close();
+        }
+        return albums;
     }
 
     public static Bitmap getArtwork(Context context, long song_id, long album_id,

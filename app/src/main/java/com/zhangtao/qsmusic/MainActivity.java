@@ -31,7 +31,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.zhangtao.qsmusic.control.AppController;
+import com.zhangtao.qsmusic.control.MusicService;
+import com.zhangtao.qsmusic.control.OnFragmentListener;
+import com.zhangtao.qsmusic.control.OnMusicStateListener;
 import com.zhangtao.qsmusic.model.Music;
+import com.zhangtao.qsmusic.ui.MusicActivity;
+import com.zhangtao.qsmusic.ui.fav.MusicLikeFragment;
+import com.zhangtao.qsmusic.ui.folder.FolderFragment;
+import com.zhangtao.qsmusic.ui.list.MusicListFragment;
+import com.zhangtao.qsmusic.ui.setting.SettingFragment;
+import com.zhangtao.qsmusic.ui.store.MusicStoreFragment;
 import com.zhangtao.qsmusic.utils.MusicUtil;
 
 public class MainActivity extends AppCompatActivity
@@ -63,7 +73,6 @@ public class MainActivity extends AppCompatActivity
 //        Intent intent = new Intent(MainActivity.this,MusicService.class);
 //        bindService(intent,connection, Context.BIND_AUTO_CREATE);
 //        musicService = AppController.getInstance().getMusicService();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         appBarLayout = (AppBarLayout) findViewById(R.id.appBarLayout);
@@ -94,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         ibSkipNext.setOnClickListener(onFooterOnClickListener);
         ibSkipPre.setOnClickListener(onFooterOnClickListener);
         layoutFooter.setOnClickListener(onFooterOnClickListener);
-
+        layoutFooter.setVisibility(View.GONE);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkPermisson()) {
@@ -256,6 +265,7 @@ public class MainActivity extends AppCompatActivity
         @Override
         public void onPlay(Music music) {
             setFooterMusic(music);
+            currentMusic = music;
         }
     };
 
@@ -268,13 +278,11 @@ public class MainActivity extends AppCompatActivity
             if (action.equalsIgnoreCase("PLAY_MUSIC")) {
                 Music music = (Music) intent.getSerializableExtra("music");
                 if (!added) {
-
                     getMusicService().addOnMusicStateListener(onMusicStateListener);
                     added = true;
                 }
                 getMusicService().playMusic(music);
                 setFooterMusic(music);
-                currentMusic = music;
             } else if (action.equalsIgnoreCase("PAUSE_MUSIC")) {
                 getMusicService().pauseMusic();
             } else if (action.equalsIgnoreCase("STOP_MUSIC")) {

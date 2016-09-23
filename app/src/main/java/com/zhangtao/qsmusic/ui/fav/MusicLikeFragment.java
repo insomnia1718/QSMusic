@@ -1,4 +1,4 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.ui.fav;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,17 +10,16 @@ import android.view.ViewGroup;
 /**
  * Created by tao.zhang on 16-9-7.
  */
-public class SettingFragment extends Fragment {
+public class MusicLikeFragment extends Fragment {
 
-    private static SettingFragment fragment;
+    private static MusicLikeFragment fragment;
 
-    public static SettingFragment getInstance(){
+    public static MusicLikeFragment getInstance(){
         if(fragment == null){
-            fragment = new SettingFragment();
+            fragment = new MusicLikeFragment();
         }
         return fragment;
     }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

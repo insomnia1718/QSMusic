@@ -1,4 +1,4 @@
-package com.zhangtao.qsmusic;
+package com.zhangtao.qsmusic.ui.folder;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
